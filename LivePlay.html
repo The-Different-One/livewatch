@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Streaming</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: white;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      background: #1f1f1f;
+      width: 100%;
+      padding: 10px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    video {
+      margin-top: 20px;
+      max-width: 90%;
+      max-height: 80vh;
+      background: black;
+    }
+    .controls {
+      margin-top: 10px;
+    }
+    .controls button {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      background-color: #333;
+      color: white;
+      border-radius: 5px;
+    }
+    .controls button:hover {
+      background-color: #555;
+    }
+  </style>
+</head>
+<body>
+  <header>Movie Streaming</header>
+  <video id="moviePlayer" controls>
+    <source src="movie.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+  <div class="controls">
+    <button id="startStream">Start Screen Sharing</button>
+    <button id="stopStream">Stop Screen Sharing</button>
+  </div>
+
+  <script>
+    let mediaStream = null;
+
+    document.getElementById("startStream").addEventListener("click", async () => {
+      try {
+        mediaStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+        const videoPlayer = document.getElementById("moviePlayer");
+        videoPlayer.srcObject = mediaStream;
+        videoPlayer.play();
+      } catch (err) {
+        alert("Failed to start screen sharing: " + err.message);
+      }
+    });
+
+    document.getElementById("stopStream").addEventListener("click", () => {
+      if (mediaStream) {
+        const tracks = mediaStream.getTracks();
+        tracks.forEach(track => track.stop());
+        mediaStream = null;
+        const videoPlayer = document.getElementById("moviePlayer");
+        videoPlayer.srcObject = null;
+        alert("Screen sharing stopped.");
+      } else {
+        alert("No active stream to stop.");
+      }
+    });
+  </script>
+</body>
+</html>
